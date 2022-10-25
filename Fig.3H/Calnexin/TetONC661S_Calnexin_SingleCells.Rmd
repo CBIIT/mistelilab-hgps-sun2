@@ -1,0 +1,216 @@
+---
+title: "Single Cell Analysis for TetON C661S Cells"
+author: "Sandra Vidak/Gianluca Pegoraro"
+date: "June 24th 2022"
+output: "html_document"
+---
+
+### Introduction
+
+Columbus screen names:
+
+`180124-40x-TetON-d50C661S-1868-GRP94-HSF1-SUN1-ctrl_20180124_122631`
+
+`20191017-40x-TetON-C661S10-GRP94-Hsc70-Hsp40_20191017_132153`
+
+`220803-40x-bin2-TetONC661S-Calnexin_20220803_120715`
+
+### Analysis Setup
+
+Load required packages.
+
+```{r load-packages}
+library(tidyverse)
+library(fs)
+library(Hmisc)
+library(ggthemes)
+library(DescTools) # for Dunnett's Test
+source("R/Plotters.R") #Functions needed for plotting
+```
+
+```{r set-knitr-options, include=FALSE}
+knitr::opts_chunk$set(
+  fig.path = 'output/',
+  dev = c("png"),
+  message = FALSE,
+  warning = FALSE
+  )
+```
+
+Set the palette and the running theme for ggplot2.
+
+```{r set-theme-palette,include=FALSE}
+theme_set(theme_bw())
+theme_update(axis.text.x = element_text(
+angle = -45,
+hjust = 0,
+vjust = 0.5
+))
+```
+
+### Experimental Metadata
+
+Read plate layouts.
+
+```{r read-metadata}
+cell_levs <- c("Uninduced", "Induced")
+
+plate_layouts <- read_tsv("metadata/plate_layout.txt") %>%
+  filter(!is.na(cell_line)) %>%
+  separate(col = cell_line, 
+           into = c("cell_line"), 
+           remove = T) %>%
+  mutate(cell_line = factor(cell_line, levels = cell_levs))
+
+glimpse(plate_layouts)
+```
+
+Plot plate layouts.
+
+```{r cell-line-layout, echo=FALSE}
+plot_plate(
+  plate_layouts,
+  property = cell_line,
+  discrete_property = T,
+  legend = "Cell Line",
+  title = "Cell Lines Layout"
+)
+```
+
+```{r ab-layout, echo=FALSE}
+plot_plate(
+  plate_layouts,
+  property = marker,
+  discrete_property = T,
+  legend = "IF Antibody Layout",
+  title = "Primary Ab"
+)
+```
+
+### Read and Process Columbus data
+
+Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+
+```{r read-columbus-data, message=FALSE}
+read_columbus_results <- function(path, glob) {
+  dir_ls(path = path,
+         recurse = T,
+         glob = glob)  %>%
+    read_tsv(
+      id = "file_name"
+    ) %>%
+    select(
+      screen = ScreenName,
+      plate = PlateName,
+      well = WellName,
+      row = Row,
+      column = Column,
+      nuc_area = `Nuclei Selected - Nucleus Area [px²]`,
+      cyto_area = `Nuclei Selected - Cytoplasm Area [px²]`,
+      cell_area = `Nuclei Selected - Cell Area [px²]`,
+      nuc_marker_int = `Nuclei Selected - Intensity Nucleus BP600/37 Mean`,
+      cyto_marker_int = `Nuclei Selected - Intensity Cytoplasm BP600/37 Mean`,
+      ratio_marker_int = `Nuclei Selected - Nuc_Cyto_BP600_Ratio`
+    )
+}
+
+glob_path <- "*- Nuclei Selected[0].txt"
+col_tbl <- read_columbus_results("data", glob_path)
+
+glimpse(col_tbl)
+```
+
+Join Columbus data with the plate layout information.
+
+```{r merge-metadata}
+cell_tbl <- col_tbl %>%
+  mutate(sum_marker_int = nuc_marker_int + cyto_marker_int) %>%
+  inner_join(plate_layouts,
+             by = c("row", "column","screen")) %>%
+  select(screen,
+         plate,
+         well,
+         row,
+         column,
+         cell_line,
+         marker,
+         nuc_area:sum_marker_int)
+
+glimpse(cell_tbl)
+```
+
+Calculate number of cells and mean per well for all properties. 4 technical replicates for each of the 3 biological replicates -> 12 wells for marker/cell line combination.
+
+```{r well-summarise}
+well_tbl <- cell_tbl %>%
+  group_by(screen,
+           well,
+           row,
+           column,
+           cell_line,
+           marker) %>%
+  summarise(cell_n = n(),
+            across(nuc_area:sum_marker_int,
+                   list(mean = ~ mean(.x, na.rm = T))))
+
+glimpse(well_tbl)
+```
+
+Calculate the mean of the technical replicates for each biological replicate. Now every marker/cell line combination has an n = 3 biological replicates.
+
+```{r bioreps-summarise}
+bioreps_tbl <- well_tbl %>%
+  group_by(screen,
+           cell_line,
+           marker) %>%
+  summarise(across(cell_n:sum_marker_int_mean,
+                    ~ mean(.x, na.rm = T)))
+
+glimpse(bioreps_tbl)
+```
+
+
+### Biological Replicates Level plot for Fig.3H
+
+
+```{r Fig3_H, fig.width=4,fig.height=4.5, echo = FALSE}
+bioreps_tbl %>%
+  plot_crossbars(property = sum_marker_int_mean,
+                 property_legend = "Total Mean Intensity (A.U), +/- SD",
+                 title = "Per Well Total Intensity")
+```
+
+
+### Calculate Dunnett's test for the continuous variables.
+
+Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing Uninduced as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`. 
+
+
+```{r}
+calc_dunnett <- function(df){
+  as.data.frame(as.table(DunnettTest(ratio_marker_int_mean ~ cell_line,
+                          control = "Uninduced",
+                          data = df)$Uninduced)) %>%
+    pivot_wider(names_from = Var2, values_from = Freq) %>%
+    rename(comparison = Var1)
+}
+```
+
+Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file. 
+
+```{r results='asis'}
+dunnett_test <- bioreps_tbl %>%
+  group_by(marker) %>%
+  group_modify(~ calc_dunnett(.x))
+
+write_csv(dunnett_test, "output/dunnett_results.csv")
+
+knitr::kable(dunnett_test, digits = 3)
+```
+
+
+Document the information about the analysis session
+
+```{r sessionInfo, include=TRUE, echo=TRUE, results='markup'}
+sessionInfo()
+```
