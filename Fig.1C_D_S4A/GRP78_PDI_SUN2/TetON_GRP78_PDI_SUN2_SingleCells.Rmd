@@ -1,7 +1,7 @@
 ---
 title: "Figure 1D: TetON Cells / GRP78, PDI, and SUN2"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "October 25th 2022"
+date: "October 27th 2022"
 output: github_document
 ---
 
@@ -88,7 +88,7 @@ plot_plate(
 
 ### Read and Process Columbus data
 
-Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+Recursively search the `input` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
 
 ```{r read-columbus-data, message=FALSE}
 read_columbus_results <- function(path, glob) {
