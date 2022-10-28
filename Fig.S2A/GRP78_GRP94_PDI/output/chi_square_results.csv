@@ -1,0 +1,19 @@
+marker,type,statistic,p.value,parameter,method
+GRP78,cyto_minus,13.28097172001787,0.10254097624381282,8,Pearson's Chi-squared test
+GRP78,cyto_plus,67.94534028394739,1.2588562473107175e-11,8,Pearson's Chi-squared test
+GRP78,nuc_minus,101.13798259435318,2.4984850627558686e-18,8,Pearson's Chi-squared test
+GRP78,nuc_plus,96.85208586804703,1.875397074175028e-17,8,Pearson's Chi-squared test
+GRP78,sum_minus,46.344174880497434,2.044404575321696e-7,8,Pearson's Chi-squared test
+GRP78,sum_plus,103.47347065238435,8.311586705415637e-19,8,Pearson's Chi-squared test
+GRP94,cyto_minus,6.694167520989995,0.5699601191377645,8,Pearson's Chi-squared test
+GRP94,cyto_plus,38.272031598385404,6.7051798330723e-6,8,Pearson's Chi-squared test
+GRP94,nuc_minus,27.536215117863797,5.709646788376598e-4,8,Pearson's Chi-squared test
+GRP94,nuc_plus,62.933700410229115,1.234665706648757e-10,8,Pearson's Chi-squared test
+GRP94,sum_minus,9.300244999605887,0.31760423906480845,8,Pearson's Chi-squared test
+GRP94,sum_plus,60.315085738457235,4.0425233490341724e-10,8,Pearson's Chi-squared test
+PDI,cyto_minus,18.783348042161695,0.016062243104240263,8,Pearson's Chi-squared test
+PDI,cyto_plus,16.138880675807286,0.04043489338382053,8,Pearson's Chi-squared test
+PDI,nuc_minus,48.13949510635884,9.291012591498491e-8,8,Pearson's Chi-squared test
+PDI,nuc_plus,49.54047856480562,5.007648461274998e-8,8,Pearson's Chi-squared test
+PDI,sum_minus,34.69072525088009,3.0438686374506895e-5,8,Pearson's Chi-squared test
+PDI,sum_plus,36.550095908131745,1.3921810485648993e-5,8,Pearson's Chi-squared test

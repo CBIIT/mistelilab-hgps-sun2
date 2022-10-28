@@ -1,0 +1,7 @@
+marker,type,statistic,p.value,parameter,method
+Calnexin,cyto_minus,201.28411407997987,3.426935956498851e-39,8,Pearson's Chi-squared test
+Calnexin,cyto_plus,138.2184201368667,5.567918821727861e-26,8,Pearson's Chi-squared test
+Calnexin,nuc_minus,168.75225542292827,2.3547865289832667e-32,8,Pearson's Chi-squared test
+Calnexin,nuc_plus,123.9413170617842,5.0825345261183245e-23,8,Pearson's Chi-squared test
+Calnexin,sum_minus,172.9505153632675,3.104193186762893e-33,8,Pearson's Chi-squared test
+Calnexin,sum_plus,137.49098848831412,7.886398658533141e-26,8,Pearson's Chi-squared test
