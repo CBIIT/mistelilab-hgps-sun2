@@ -1,0 +1,7 @@
+marker,type,statistic,p.value,parameter,method
+GRP78,cyto_minus,0.2983545370871012,0.8614163993330248,2,Pearson's Chi-squared test
+GRP78,cyto_plus,55.53132026341772,8.740313662782838e-13,2,Pearson's Chi-squared test
+GRP78,nuc_minus,1.4933999426348266,0.47392795082599426,2,Pearson's Chi-squared test
+GRP78,nuc_plus,20.312767817927803,3.882741809496392e-5,2,Pearson's Chi-squared test
+GRP78,sum_minus,2.6691427723926076,0.2632709928584055,2,Pearson's Chi-squared test
+GRP78,sum_plus,43.046211093616684,4.4940099289151533e-10,2,Pearson's Chi-squared test
