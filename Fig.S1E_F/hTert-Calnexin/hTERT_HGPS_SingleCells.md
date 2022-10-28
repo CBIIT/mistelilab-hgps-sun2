@@ -1,4 +1,4 @@
-Figure S1E and S1F: hTERT-Progeria / GRP94
+Figure S1E and S1F: hTERT-Progeria / Calnexin
 ================
 Sandra Vidak/Gianluca Pegoraro
 October 28th 2022
