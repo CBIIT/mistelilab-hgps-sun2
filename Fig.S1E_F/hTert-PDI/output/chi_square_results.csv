@@ -1,0 +1,7 @@
+marker,type,statistic,p.value,parameter,method
+PDI,cyto_minus,5.178366462851357,0.07508133912667053,2,Pearson's Chi-squared test
+PDI,cyto_plus,71.56186510731028,2.887609318204138e-16,2,Pearson's Chi-squared test
+PDI,nuc_minus,17.859153201420828,1.3241407668888565e-4,2,Pearson's Chi-squared test
+PDI,nuc_plus,5.768164720221841,0.05590606764317924,2,Pearson's Chi-squared test
+PDI,sum_minus,9.678222796168368,0.007914083397654795,2,Pearson's Chi-squared test
+PDI,sum_plus,52.208529837466315,4.603220637942204e-12,2,Pearson's Chi-squared test

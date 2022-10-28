@@ -1,8 +1,8 @@
 ---
-title: "Single Cell Analysis for htert HGPS Cells"
+title: "Figure S1E and S1F: hTERT-Progeria / PDI"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "April 4th 2022"
-output: "html_document"
+date: "October 28th 2022"
+output: github_document
 ---
 
 ### Introduction
@@ -31,7 +31,6 @@ source("R/Plotters.R") #Functions needed for plotting
 ```{r set-knitr-options, include=FALSE}
 knitr::opts_chunk$set(
   fig.path = 'output/',
-  dev = c("png"),
   message = FALSE,
   warning = FALSE
   )
@@ -90,7 +89,7 @@ plot_plate(
 
 ### Read and Process Columbus data
 
-Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+Recursively search the `input` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
 
 ```{r read-columbus-data, message=FALSE}
 read_columbus_results <- function(path, glob) {
@@ -116,7 +115,7 @@ read_columbus_results <- function(path, glob) {
 }
 
 glob_path <- "*- Nuclei Selected[0].txt"
-col_tbl <- read_columbus_results("data", glob_path)
+col_tbl <- read_columbus_results("input", glob_path)
 
 glimpse(col_tbl)
 ```
@@ -140,7 +139,7 @@ cell_tbl <- col_tbl %>%
 glimpse(cell_tbl)
 ```
 
-Calculate number of cells and mean per well for all properties. 4 technical replicates for each of the 3 biological replicates -> 12 wells for marker/cell line combination.
+Calculate number of cells and mean per well for all properties.
 
 ```{r well-summarise}
 well_tbl <- cell_tbl %>%
@@ -170,9 +169,7 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-
 ### Biological Replicates Level plots for Figure S1E
-
 
 ```{r Fig.S1_E, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
@@ -238,7 +235,7 @@ plot_crossbars(property = prop_defects_sum_plus_mean,
 
 ### Calculate Dunnett's test for the continuous variables.
 
-Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`. 
+Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`.
 
 ```{r}
 calc_dunnett <- function(df){
@@ -250,7 +247,7 @@ calc_dunnett <- function(df){
 }
 ```
 
-Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file. 
+Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file.
 
 ```{r results='asis'}
 dunnett_test <- bioreps_tbl %>%
@@ -265,6 +262,7 @@ knitr::kable(dunnett_test, digits = 3)
 ### Chi-square test for counts/proportion of Cells with defects
 
 Calculate the number of cells with defects and normal on a per well basis. Each treatment has 12 wells (4 technical replicates X 3 biological replicates)
+
 ```{r}
 defects_counts <- cell_tbl %>%
   left_join(thresholds_tbl, by = c("screen", "marker")) %>%
@@ -283,7 +281,9 @@ defects_counts <- cell_tbl %>%
 
 defects_counts
 ```
-Summarize the counts by taking the mean of all 12 wells per condition, then pivot the table longer to put in a format that can be handled by xtabs downstream. 
+
+Summarize the counts by taking the mean of all 12 wells per condition, then pivot the table longer to put in a format that can be handled by xtabs downstream.
+
 ```{r}
 defects_counts_long <- defects_counts %>%
   select(-n_cells) %>%
@@ -298,7 +298,7 @@ defects_counts_long <- defects_counts %>%
 defects_counts_long
 ```
 
-Define a function that calculate a contingency table of counts based on the cell line and the cell class (normal/defects). The table is then used to calculate the chi-square test to determine whether any of the 6 cell lines is different from the others in terms of proportion of defects. 
+Define a function that calculate a contingency table of counts based on the cell line and the cell class (normal/defects). The table is then used to calculate the chi-square test to determine whether any of the 6 cell lines is different from the others in terms of proportion of defects.
 
 ```{r}
 calc_chi <- function(df){
@@ -307,8 +307,7 @@ calc_chi <- function(df){
 }
 ```
 
-Apply the function on a per IF marker and on a per defect category to calculate the p-values on a per
-IF marker and defect type basis. 
+Apply the function on a per IF marker and on a per defect category to calculate the p-values on a per IF marker and defect type basis.
 
 ```{r}
 chi_square_test <- defects_counts_long %>%
