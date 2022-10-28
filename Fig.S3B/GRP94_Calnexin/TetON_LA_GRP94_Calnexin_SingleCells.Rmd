@@ -1,15 +1,15 @@
 ---
-title: "Single Cell Analysis for TetON-LA Cells"
+title: "Figure S3B: TetON-Lamin A / GRP94 and Calnexin"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "July 6th 2022"
-output: "html_document"
+date: "October 28th 2022"
+output: github_document
 ---
 
 ### Introduction
 
 Columbus screen names:
 
-`171006-TetON-LA-GRP94-Calnexin_20171006_171548 `
+`171006-TetON-LA-GRP94-Calnexin_20171006_171548`
 
 `180130-40x-TetON-LA-GRP94,Calnexin-SUN1_20180130_114147`
 
@@ -29,7 +29,6 @@ source("R/Plotters.R") #Functions needed for plotting
 ```{r set-knitr-options, include=FALSE}
 knitr::opts_chunk$set(
   fig.path = 'output/',
-  dev = c("png"),
   message = FALSE,
   warning = FALSE
   )
@@ -87,7 +86,7 @@ plot_plate(
 
 ### Read and Process Columbus data
 
-Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+Recursively search the `input` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
 
 ```{r read-columbus-data, message=FALSE}
 read_columbus_results <- function(path, glob) {
@@ -113,7 +112,7 @@ read_columbus_results <- function(path, glob) {
 }
 
 glob_path <- "*- Nuclei Selected[0].txt"
-col_tbl <- read_columbus_results("data", glob_path)
+col_tbl <- read_columbus_results("input", glob_path)
 
 glimpse(col_tbl)
 ```
@@ -137,7 +136,7 @@ cell_tbl <- col_tbl %>%
 glimpse(cell_tbl)
 ```
 
-Calculate number of cells and mean per well for all properties. 4 technical replicates for each of the 3 biological replicates -> 12 wells for marker/cell line combination.
+Calculate number of cells and mean per well for all properties.
 
 ```{r well-summarise}
 well_tbl <- cell_tbl %>%
@@ -154,7 +153,7 @@ well_tbl <- cell_tbl %>%
 glimpse(well_tbl)
 ```
 
-Calculate the mean of the technical replicates for each biological replicate. Now every marker/cell line combination has an n = 3 biological replicates.
+Calculate the mean of the technical replicates for each biological replicate. Now every marker/cell line combination has an n = 2 biological replicates.
 
 ```{r bioreps-summarise}
 bioreps_tbl <- well_tbl %>%
@@ -167,9 +166,7 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-
 ### Biological Replicates Level plot for Fig.S3B
-
 
 ```{r FigS3_B, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
@@ -178,13 +175,9 @@ bioreps_tbl %>%
                  title = "Per Well Total Intensity")
 ```
 
-
-
-
 ### Calculate Dunnett's test for the continuous variables.
 
-Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`. 
-
+Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`.
 
 ```{r}
 calc_dunnett <- function(df){
@@ -196,7 +189,7 @@ calc_dunnett <- function(df){
 }
 ```
 
-Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file. 
+Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file.
 
 ```{r results='asis'}
 dunnett_test <- bioreps_tbl %>%
@@ -207,7 +200,6 @@ write_csv(dunnett_test, "output/dunnett_results.csv")
 
 knitr::kable(dunnett_test, digits = 3)
 ```
-
 
 Document the information about the analysis session
 
