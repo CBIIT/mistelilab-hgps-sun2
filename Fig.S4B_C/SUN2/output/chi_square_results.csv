@@ -1,0 +1,7 @@
+marker,type,statistic,p.value,parameter,method
+SUN2,cyto_minus,3.059611810321904,0.21657769985051994,2,Pearson's Chi-squared test
+SUN2,cyto_plus,6.666707692421812,0.035673261578499704,2,Pearson's Chi-squared test
+SUN2,nuc_minus,7.581282473941415,0.022581117360331356,2,Pearson's Chi-squared test
+SUN2,nuc_plus,90.0554946603554,2.7841831576758785e-20,2,Pearson's Chi-squared test
+SUN2,sum_minus,8.287679280643733,0.015861830705763844,2,Pearson's Chi-squared test
+SUN2,sum_plus,88.85953484860633,5.062874654784669e-20,2,Pearson's Chi-squared test
