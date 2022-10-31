@@ -1,5 +1,5 @@
 ---
-title: "Figure S4B and S4C: hTERT-HCPS Cells / SUN2"
+title: "Figure S4B and S4C: hTERT-HGPS Cells / SUN2"
 author: "Sandra Vidak/Gianluca Pegoraro"
 date: "October 31st 2022"
 output: github_document

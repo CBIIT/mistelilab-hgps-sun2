@@ -1,4 +1,4 @@
-Figure S4B and S4C: hTERT-HCPS Cells / SUN2
+Figure S4B and S4C: hTERT-HGPS Cells / SUN2
 ================
 Sandra Vidak/Gianluca Pegoraro
 October 31st 2022
