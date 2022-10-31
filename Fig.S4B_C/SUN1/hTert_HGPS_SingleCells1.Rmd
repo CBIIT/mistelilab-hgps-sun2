@@ -1,0 +1,324 @@
+---
+title: "Single Cell Analysis for primary HGPS Cells"
+author: "Sandra Vidak/Gianluca Pegoraro"
+date: "March 22nd 2022"
+output: "html_document"
+---
+
+### Introduction
+
+Columbus screen names:
+
+`180124-40x-hFibro-SUN1_20180124_110053`
+
+`180129-40x-hFibro-GRP94-Hsc70-SUN1-LAP2_20180129_121044`
+
+`180205-40x-hFibro-Calnexin-Hsp70-Hsp90-SUN1_20180205_112614`
+
+### Analysis Setup
+
+Load required packages.
+
+```{r load-packages}
+library(tidyverse)
+library(fs)
+library(Hmisc)
+library(ggthemes)
+library(DescTools) # for Dunnett's Test
+source("R/Plotters.R") #Functions needed for plotting
+```
+
+```{r set-knitr-options, include=FALSE}
+knitr::opts_chunk$set(
+  fig.path = 'output/',
+  dev = c("png"),
+  message = FALSE,
+  warning = FALSE
+  )
+```
+
+Set the palette and the running theme for ggplot2.
+
+```{r set-theme-palette,include=FALSE}
+theme_set(theme_bw())
+theme_update(axis.text.x = element_text(
+angle = -45,
+hjust = 0,
+vjust = 0.5
+))
+```
+
+### Experimental Metadata
+
+Read plate layouts.
+
+```{r read-metadata}
+cell_levs <- c("WT",
+               "HGPS1","HGPS2")
+
+plate_layouts <- read_tsv("metadata/plate_layout.txt") %>%
+  filter(!is.na(cell_line)) %>%
+  separate(col = cell_line, 
+           into = c("cell_line", "cell_id"), 
+           remove = T) %>%
+  mutate(cell_line = factor(cell_line, levels = cell_levs))
+
+glimpse(plate_layouts)
+```
+
+Plot plate layouts.
+
+```{r cell-line-layout, echo=FALSE}
+plot_plate(
+  plate_layouts,
+  property = cell_line,
+  discrete_property = T,
+  legend = "Cell Line",
+  title = "Cell Lines Layout"
+)
+```
+
+```{r ab-layout, echo=FALSE}
+plot_plate(
+  plate_layouts,
+  property = marker,
+  discrete_property = T,
+  legend = "IF Antibody Layout",
+  title = "Primary Ab"
+)
+```
+
+### Read and Process Columbus data
+
+Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+
+```{r read-columbus-data, message=FALSE}
+read_columbus_results <- function(path, glob) {
+  dir_ls(path = path,
+         recurse = T,
+         glob = glob)  %>%
+    read_tsv(
+      id = "file_name"
+    ) %>%
+    select(
+      screen = ScreenName,
+      plate = PlateName,
+      well = WellName,
+      row = Row,
+      column = Column,
+      nuc_area = `Nuclei Selected - Nucleus Area [px²]`,
+      cyto_area = `Nuclei Selected - Cytoplasm Area [px²]`,
+      cell_area = `Nuclei Selected - Cell Area [px²]`,
+      nuc_marker_int = `Nuclei Selected - Intensity Nucleus BP600/37 Mean`,
+      cyto_marker_int = `Nuclei Selected - Intensity Cytoplasm BP600/37 Mean`,
+      ratio_marker_int = `Nuclei Selected - Nuc_Cyto_BP600_Ratio`
+    )
+}
+
+glob_path <- "*- Nuclei Selected[0].txt"
+col_tbl <- read_columbus_results("data", glob_path)
+
+glimpse(col_tbl)
+```
+
+Join Columbus data with the plate layout information.
+
+```{r merge-metadata}
+cell_tbl <- col_tbl %>%
+  mutate(sum_marker_int = nuc_marker_int + cyto_marker_int) %>%
+  inner_join(plate_layouts,
+             by = c("row", "column")) %>%
+  select(screen,
+         plate,
+         well,
+         row,
+         column,
+         cell_line,
+         marker,
+         nuc_area:sum_marker_int)
+
+glimpse(cell_tbl)
+```
+
+Calculate number of cells and mean per well for all properties. 4 technical replicates for each of the 3 biological replicates -> 12 wells for marker/cell line combination.
+
+```{r well-summarise}
+well_tbl <- cell_tbl %>%
+  group_by(screen,
+           well,
+           row,
+           column,
+           cell_line,
+           marker) %>%
+  summarise(cell_n = n(),
+            across(nuc_area:sum_marker_int,
+                   list(mean = ~ mean(.x, na.rm = T))))
+
+glimpse(well_tbl)
+```
+
+Calculate the mean of the technical replicates for each biological replicate. Now every marker/cell line combination has an n = 3 biological replicates.
+
+```{r bioreps-summarise}
+bioreps_tbl <- well_tbl %>%
+  group_by(screen,
+           cell_line,
+           marker) %>%
+  summarise(across(cell_n:sum_marker_int_mean,
+                    ~ mean(.x, na.rm = T)))
+
+glimpse(bioreps_tbl)
+```
+
+
+### Biological Replicates Level plots for Figure S4B
+
+```{r Fig4_B, fig.width=4,fig.height=4.5, echo = FALSE}
+bioreps_tbl %>%
+  plot_crossbars(property = sum_marker_int_mean,
+                 property_legend = "Total Mean Intensity +/- SD",
+                 title = "Per Well Total Intensity")
+```
+### Threshold quantifications
+
+Calculate the mean and standard deviation for the pooled population of controls cells (`WT1`) and on a per biological replicate and on a per marker basis. Set the threshold for quantification of increases or decreases at Mean +/- 1 SD.
+
+```{r calc-thresholds}
+thresholds_tbl <- cell_tbl %>% 
+  filter(cell_line == "WT") %>%
+  group_by(screen, marker) %>%
+  summarise(across(nuc_marker_int:sum_marker_int,
+                   list(mean_neg = ~ mean(.x, na.rm = T),
+                        sd_neg = ~ sd(.x, na.rm = T)))) %>%
+  mutate(nuc_marker_plus_thres = nuc_marker_int_mean_neg + 1.0*(nuc_marker_int_sd_neg),
+         nuc_marker_minus_thres = nuc_marker_int_mean_neg - 1.0*(nuc_marker_int_sd_neg),
+         cyto_marker_plus_thres = cyto_marker_int_mean_neg + 1.0*(cyto_marker_int_sd_neg),
+         cyto_marker_minus_thres = cyto_marker_int_mean_neg - 1.0*(cyto_marker_int_sd_neg),
+         sum_marker_plus_thres = sum_marker_int_mean_neg + 1.0*(sum_marker_int_sd_neg),
+         sum_marker_minus_thres = sum_marker_int_mean_neg - 1.0*(sum_marker_int_sd_neg))
+
+glimpse(thresholds_tbl)
+```
+
+```{r}
+defects_tbl <- cell_tbl %>%
+  left_join(thresholds_tbl, by = c("screen", "marker")) %>%
+  group_by(screen, row, column, cell_line, marker) %>%
+  summarise(prop_defects_cyto_plus = 100 * mean(cyto_marker_int >= cyto_marker_plus_thres, na.rm = T),
+            prop_defects_cyto_minus = 100 * mean(cyto_marker_int <= cyto_marker_minus_thres, na.rm = T),
+            prop_defects_nuc_plus = 100 * mean(nuc_marker_int >= nuc_marker_plus_thres, na.rm = T),
+            prop_defects_nuc_minus = 100 * mean(nuc_marker_int <= nuc_marker_minus_thres, na.rm = T),
+            prop_defects_sum_plus = 100 * mean(sum_marker_int >= sum_marker_plus_thres, na.rm = T),
+            prop_defects_sum_minus = 100 * mean(sum_marker_int <= sum_marker_minus_thres, na.rm = T)) %>%
+  arrange(screen, marker, cell_line)
+
+glimpse(defects_tbl)
+```
+
+```{r bioreps-defects}
+bioreps_defects_tbl <- defects_tbl %>%
+  group_by(screen, cell_line, marker) %>%
+  summarise(across(prop_defects_cyto_plus:prop_defects_sum_minus,
+                   list(mean = ~ mean(.x, na.rm = T),
+                        sd = ~ sd(.x, na.rm = T))))
+
+glimpse(bioreps_defects_tbl)
+```
+
+### Biological Replicates Level plots for Figure S4C
+
+```{r Fig4_C, fig.width=4,fig.height=4.5, echo = FALSE}
+bioreps_defects_tbl %>%
+plot_crossbars(property = prop_defects_sum_plus_mean,
+               property_legend = "% of Cells with Plus\nHGPS Total Alterations",
+               title = "Total Alterations Plus")
+```
+### Calculate Dunnett's test for the continuous variables.
+
+Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`. 
+
+```{r}
+calc_dunnett <- function(df){
+  as.data.frame(as.table(DunnettTest(sum_marker_int_mean ~ cell_line,
+                          control = "WT",
+                          data = df)$WT)) %>%
+    pivot_wider(names_from = Var2, values_from = Freq) %>%
+    rename(comparison = Var1)
+}
+```
+
+Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file. 
+
+```{r results='asis'}
+dunnett_test <- bioreps_tbl %>%
+  group_by(marker) %>%
+  group_modify(~ calc_dunnett(.x))
+
+write_csv(dunnett_test, "output/dunnett_results.csv")
+
+knitr::kable(dunnett_test, digits = 3)
+```
+
+### Chi-square test for counts/proportion of Cells with defects
+
+Calculate the number of cells with defects and normal on a per well basis. Each treatment has 12 wells (4 technical replicates X 3 biological replicates)
+```{r}
+defects_counts <- cell_tbl %>%
+  left_join(thresholds_tbl, by = c("screen", "marker")) %>%
+  group_by(screen, row, column, cell_line, marker) %>%
+  summarise(n_cells = n(),
+            cyto_plus_def = sum(cyto_marker_int >= cyto_marker_plus_thres, na.rm = T),
+            cyto_minus_def = sum(cyto_marker_int <= cyto_marker_minus_thres, na.rm = T),
+            nuc_plus_def = sum(nuc_marker_int >= nuc_marker_plus_thres, na.rm = T),
+            nuc_minus_def = sum(nuc_marker_int <= nuc_marker_minus_thres, na.rm = T),
+            sum_plus_def = sum(sum_marker_int >= sum_marker_plus_thres, na.rm = T),
+            sum_minus_def = sum(sum_marker_int <= sum_marker_minus_thres, na.rm = T)) %>%
+  mutate(across(cyto_plus_def:sum_minus_def,
+                list(norm = ~ n_cells - .x))) %>%
+  rename_with( ~ gsub("def_norm", "norm", .x, fixed = TRUE)) %>%
+  arrange(screen, marker, cell_line)
+
+defects_counts
+```
+Summarize the counts by taking the mean of all 12 wells per condition, then pivot the table longer to put in a format that can be handled by xtabs downstream. 
+```{r}
+defects_counts_long <- defects_counts %>%
+  select(-n_cells) %>%
+  group_by(marker, cell_line) %>%
+  summarise(across(cyto_plus_def:sum_minus_norm, # Take the mean of all the wells in all the technical and biological replicates
+              ~ mean(.x, na.rm = TRUE))) %>% 
+  pivot_longer(cols = cyto_plus_def:sum_minus_norm,
+               names_pattern = "(.*_.*)_(.*)",
+               names_to = c("type", "quality"),
+               values_to = "count")
+
+defects_counts_long
+```
+
+Define a function that calculate a contingency table of counts based on the cell line and the cell class (normal/defects). The table is then used to calculate the chi-square test to determine whether any of the 6 cell lines is different from the others in terms of proportion of defects. 
+
+```{r}
+calc_chi <- function(df){
+    xtabs_tbl <- xtabs(count ~ cell_line + quality, data = df)
+    broom::tidy(chisq.test(xtabs_tbl))
+}
+```
+
+Apply the function on a per IF marker and on a per defect category to calculate the p-values on a per
+IF marker and defect type basis. 
+
+```{r}
+chi_square_test <- defects_counts_long %>%
+  group_by(marker, type) %>%
+  group_modify(~ calc_chi(.x))
+
+write_csv(chi_square_test, "output/chi_square_results.csv")
+
+knitr::kable(chi_square_test, digits = 3)
+```
+
+Document the information about the analysis session
+
+```{r sessionInfo, include=TRUE, echo=TRUE, results='markup'}
+sessionInfo()
+```
