@@ -130,7 +130,6 @@ ggplot(GRP78_plot, aes(x = Condition,
   scale_y_continuous(expand = c(0, 0), limits = c(0,15000))
 ```
 
-
 Document the information about the analysis session
 
 ```{r sessionInfo, include=TRUE, echo=TRUE, results='markup'}

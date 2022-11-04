@@ -88,8 +88,9 @@ GRP78_plot <- data.frame(Mean_GRP78_levels2,SD_GRP78_levels2, Condition)
 
 ### Biological Replicates Level plot for Fig.3I
 
-![](output/Fig_3I-1.png)<!-- --> Document the information about the
-analysis session
+![](output/Fig_3I-1.png)<!-- -->
+
+Document the information about the analysis session
 
 ``` r
 sessionInfo()

@@ -8,7 +8,7 @@ library(ggplot2)
 library(ggthemes)
 ```
 
-### Read Data for Fig S3C
+### Read Data for Fig S5D
 
 Import and filter data and calculate sum and mean of the GRP78
 peripheral recruitment for each biological replicate in TetON
@@ -73,7 +73,7 @@ Condition <- rep(c("GFP-LA OFF","GFP-LA ON"), each=1)
 GRP78_plot <- data.frame(Mean_GRP78_levels2,SD_GRP78_levels2, Condition )
 ```
 
-### Biological Replicates Level plot for Fig.S3C
+### Biological Replicates Level plot for Fig.S5D
 
 ![](output/Fig_S3C-1.png)<!-- -->
 
