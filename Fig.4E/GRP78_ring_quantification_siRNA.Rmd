@@ -1,0 +1,155 @@
+---
+title: "Figure 4E: TETON Cells / GRP78"
+author: "Sandra Vidak"
+date: "November 3rd 2022"
+output: github_document
+---
+
+```{r load-packages}
+library(ggplot2)
+library(ggthemes)
+```
+
+```{r set-knitr-options, include=FALSE}
+knitr::opts_chunk$set(
+  fig.path = 'output/',
+  message = FALSE,
+  warning = FALSE
+  )
+```
+
+### Read Data for Fig 4E
+
+Import and filter data and calculate sum and mean of the GRP78 peripheral recruitment for each biological replicate in TetON fibroblasts.
+
+```{r}
+GRP78_1 <- read.csv(file="input/GRP78ring1.csv") 
+
+GRP78_1_filtered <- GRP78_1 [ c(seq(1, nrow(GRP78_1),1)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_1_Induced_filtered <- GRP78_1 [ c(seq(4, nrow(GRP78_1),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_1_siSUN1_filtered <- GRP78_1 [ c(seq(5, nrow(GRP78_1),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_1_siSUN2_filtered <- GRP78_1 [ c(seq(6, nrow(GRP78_1),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_1_U_filtered_rowsum <- rowSums(GRP78_1_filtered[,1:2])
+
+GRP78_1_Induced_filtered_rowsum <- rowSums(GRP78_1_Induced_filtered[,1:2])
+
+GRP78_1_siSUN1_filtered_rowsum <- rowSums(GRP78_1_siSUN1_filtered[,1:2])
+
+GRP78_1_siSUN2_filtered_rowsum <- rowSums(GRP78_1_siSUN2_filtered[,1:2])
+
+Mean_Uninduced_GRP78_1 <- mean(GRP78_1_U_filtered_rowsum[1:3])
+
+Mean_Induced_siCTRL_GRP78_1 <- mean(GRP78_1_Induced_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN1_GRP78_1 <- mean(GRP78_1_siSUN1_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN2_GRP78_1 <- mean(GRP78_1_siSUN2_filtered_rowsum[1:3])
+
+
+```
+
+```{r}
+GRP78_2 <- read.csv(file="input/GRP78ring2.csv") 
+
+GRP78_2_filtered <- GRP78_2[ c(seq(1, nrow(GRP78_2),1)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_2_Induced_filtered <- GRP78_2 [ c(seq(4, nrow(GRP78_2),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_2_siSUN1_filtered <- GRP78_2 [ c(seq(5, nrow(GRP78_2),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_2_siSUN2_filtered <- GRP78_2 [ c(seq(6, nrow(GRP78_2),4)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_2_U_filtered_rowsum <- rowSums(GRP78_2_filtered[,1:2])
+
+GRP78_2_Induced_filtered_rowsum <- rowSums(GRP78_2_Induced_filtered[,1:2])
+
+GRP78_2_siSUN1_filtered_rowsum <- rowSums(GRP78_2_siSUN1_filtered[,1:2])
+
+GRP78_2_siSUN2_filtered_rowsum <- rowSums(GRP78_2_siSUN2_filtered[,1:2])
+
+Mean_Uninduced_GRP78_2 <- mean(GRP78_2_U_filtered_rowsum[1:3])
+
+Mean_Induced_siCTRL_GRP78_2 <- mean(GRP78_2_Induced_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN1_GRP78_2 <- mean(GRP78_2_siSUN1_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN2_GRP78_2 <- mean(GRP78_2_siSUN2_filtered_rowsum[1:3])
+```
+
+```{r}
+
+GRP78_3 <- read.csv(file="input/GRP78ring3.csv") 
+GRP78_3_filtered <- GRP78_3 [ c(seq(1, nrow(GRP78_3),1)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_3_Induced_filtered <- GRP78_3 [ c(seq(4, nrow(GRP78_3),3)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_3_siSUN1_filtered <- GRP78_3 [ c(seq(5, nrow(GRP78_3),3)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_3_siSUN2_filtered <- GRP78_3 [ c(seq(6, nrow(GRP78_3),3)), c("Intensity.Nucleus.3", "Intensity.Nucleus.4")]
+
+GRP78_3_U_filtered_rowsum <- rowSums(GRP78_3_filtered[,1:2])
+
+GRP78_3_Induced_filtered_rowsum <- rowSums(GRP78_3_Induced_filtered[,1:2])
+
+GRP78_3_siSUN1_filtered_rowsum <- rowSums(GRP78_3_siSUN1_filtered[,1:2])
+
+GRP78_3_siSUN2_filtered_rowsum <- rowSums(GRP78_3_siSUN2_filtered[,1:2])
+
+Mean_Uninduced_GRP78_3 <- mean(GRP78_3_U_filtered_rowsum[1:3])
+
+Mean_Induced_siCTRL_GRP78_3 <- mean(GRP78_3_Induced_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN1_GRP78_3 <- mean(GRP78_3_siSUN1_filtered_rowsum[1:3])
+
+Mean_Induced_siSUN2_GRP78_3 <- mean(GRP78_3_siSUN2_filtered_rowsum[1:3])
+```
+
+```{r}
+GRP78_Uninduced <- c(Mean_Uninduced_GRP78_1, Mean_Uninduced_GRP78_2, Mean_Uninduced_GRP78_3)
+
+GRP78_Induced_siCTRL <- c(Mean_Induced_siCTRL_GRP78_1, Mean_Induced_siCTRL_GRP78_2, Mean_Induced_siCTRL_GRP78_3)
+
+GRP78_Induced_siSUN1 <- c(Mean_Induced_siSUN1_GRP78_1, Mean_Induced_siSUN1_GRP78_2, Mean_Induced_siSUN1_GRP78_3)
+
+GRP78_Induced_siSUN2 <- c(Mean_Induced_siSUN2_GRP78_1, Mean_Induced_siSUN2_GRP78_2, Mean_Induced_siSUN2_GRP78_3)
+
+
+GRP78_df <- data.frame (GRP78_Uninduced,GRP78_Induced_siCTRL,GRP78_Induced_siSUN1, GRP78_Induced_siSUN2 )
+rownames(GRP78_df) <- c("Biological replicate1", "Biological replicate2", "Biological replicate3")
+```
+
+Calculate mean and SD for 3 different biological replicates in every condition
+
+```{r}
+Mean_GRP78_levels <- apply (GRP78_df,2,mean)
+
+SD_GRP78_levels <- apply (GRP78_df,2,sd)
+
+Mean_GRP78_levels2 <- as.data.frame(Mean_GRP78_levels)
+
+SD_GRP78_levels2 <- as.data.frame(SD_GRP78_levels)
+Condition <- rep(c("GFP-progerin OFF","GFP-progerin ON", "siSUN1", "siSUN2"), each=1)
+GRP78_plot <- data.frame(Mean_GRP78_levels2,SD_GRP78_levels2, Condition )
+```
+
+### Biological Replicates Level plot for Fig.4E
+
+```{r Fig_3C, echo=FALSE}
+ggplot(GRP78_plot, aes(x = Condition, y = Mean_GRP78_levels, 
+                       ymin = Mean_GRP78_levels-SD_GRP78_levels, 
+                       ymax = Mean_GRP78_levels+SD_GRP78_levels)) + 
+  geom_crossbar()+ ylab("Mean Peripheral Intensity +/-SD [a.u.]") + 
+  ggtitle("Per Well Total Intensity")+ 
+  scale_y_continuous(expand = c(0, 0), limits = c(0,25000))
+```
+
+
+Document the information about the analysis session
+
+```{r sessionInfo, include=TRUE, echo=TRUE, results='markup'}
+sessionInfo()
+```
