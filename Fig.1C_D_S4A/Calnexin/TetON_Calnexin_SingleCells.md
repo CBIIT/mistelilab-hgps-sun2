@@ -1,7 +1,7 @@
 Figure 1D: TetON Cells / Calnexin
 ================
 Sandra Vidak/Gianluca Pegoraro
-October 27th 2022
+November 7th 2022
 
 ### Introduction
 
@@ -62,6 +62,18 @@ library(DescTools) # for Dunnett's Test
     ##     %nin%, Label, Mean, Quantile
 
 ``` r
+library(curl)
+```
+
+    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## 
+    ## Attaching package: 'curl'
+    ## 
+    ## The following object is masked from 'package:readr':
+    ## 
+    ##     parse_date
+
+``` r
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
@@ -96,6 +108,19 @@ Plot plate layouts.
 ![](output/cell-line-layout-1.png)<!-- -->
 
 ![](output/ab-layout-1.png)<!-- -->
+
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare
+if they have not been already downloaded.
+
+``` r
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38127834"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
+```
 
 ### Read and Process Columbus data
 
@@ -307,10 +332,11 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1       Formula_1.2-4    
-    ##  [5] survival_3.4-0    lattice_0.20-45   fs_1.5.2          forcats_0.5.2    
-    ##  [9] stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5       readr_2.1.3      
-    ## [13] tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6     tidyverse_1.3.2  
+    ##  [1] curl_4.3.3        DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1      
+    ##  [5] Formula_1.2-4     survival_3.4-0    lattice_0.20-45   fs_1.5.2         
+    ##  [9] forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5      
+    ## [13] readr_2.1.3       tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6    
+    ## [17] tidyverse_1.3.2  
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] bit64_4.0.5         lubridate_1.8.0     RColorBrewer_1.1-3 
