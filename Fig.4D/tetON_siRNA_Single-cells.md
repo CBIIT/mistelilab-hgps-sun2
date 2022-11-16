@@ -1,7 +1,7 @@
 Figure 4D: TetON Cells
 ================
 Sandra Vidak/Gianluca Pegoraro
-October 27th 2022
+November 16th 2022
 
 ### Introduction
 
@@ -62,6 +62,18 @@ library(DescTools) # for Dunnett's Test
     ##     %nin%, Label, Mean, Quantile
 
 ``` r
+library(curl)
+```
+
+    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## 
+    ## Attaching package: 'curl'
+    ## 
+    ## The following object is masked from 'package:readr':
+    ## 
+    ##     parse_date
+
+``` r
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
@@ -96,11 +108,24 @@ Plot plate layouts.
 
 ![](output/ab-layout-1.png)<!-- -->
 
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare
+if they have not been already downloaded.
+
+``` r
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38158308"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
+```
+
 ### Read and Process Columbus data
 
-Recursively search the `data` directory and its subdirectories for files
-whose name includes the Glob patterns defined in the chunk above, and
-read the cell-level Columbus data from the results text files.
+Recursively search the `input` directory and its subdirectories for
+files whose name includes the Glob patterns defined in the chunk above,
+and read the cell-level Columbus data from the results text files.
 
 ``` r
 read_columbus_results <- function(path, glob) {
@@ -283,8 +308,8 @@ knitr::kable(dunnett_test, digits = 3)
 
 | marker | comparison                      |  diff | lwr.ci | upr.ci |  pval |
 |:-------|:--------------------------------|------:|-------:|-------:|------:|
-| GRP78  | Induced_siCTRL-Uninduced_siCTRL | 0.383 | -0.136 |  0.903 | 0.152 |
-| GRP78  | Induced_siSUN1-Uninduced_siCTRL | 0.484 | -0.035 |  1.004 | 0.066 |
+| GRP78  | Induced_siCTRL-Uninduced_siCTRL | 0.383 | -0.136 |  0.903 | 0.153 |
+| GRP78  | Induced_siSUN1-Uninduced_siCTRL | 0.484 | -0.035 |  1.004 | 0.067 |
 | GRP78  | Induced_siSUN2-Uninduced_siCTRL | 0.193 | -0.327 |  0.712 | 0.601 |
 
 Document the information about the analysis session
@@ -308,10 +333,11 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1       Formula_1.2-4    
-    ##  [5] survival_3.4-0    lattice_0.20-45   fs_1.5.2          forcats_0.5.2    
-    ##  [9] stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5       readr_2.1.3      
-    ## [13] tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6     tidyverse_1.3.2  
+    ##  [1] curl_4.3.3        DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1      
+    ##  [5] Formula_1.2-4     survival_3.4-0    lattice_0.20-45   fs_1.5.2         
+    ##  [9] forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5      
+    ## [13] readr_2.1.3       tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6    
+    ## [17] tidyverse_1.3.2  
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] bit64_4.0.5         lubridate_1.8.0     RColorBrewer_1.1-3 
@@ -330,7 +356,7 @@ sessionInfo()
     ## [40] rlang_1.0.6         readxl_1.4.1        rstudioapi_0.14    
     ## [43] farver_2.1.1        generics_0.1.3      jsonlite_1.8.3     
     ## [46] vroom_1.6.0         googlesheets4_1.0.1 magrittr_2.0.3     
-    ## [49] interp_1.1-3        Matrix_1.5-1        Rcpp_1.0.9         
+    ## [49] interp_1.1-3        Matrix_1.5-3        Rcpp_1.0.9         
     ## [52] munsell_0.5.0       fansi_1.0.3         lifecycle_1.0.3    
     ## [55] stringi_1.7.8       yaml_2.3.6          rootSolve_1.8.2.3  
     ## [58] MASS_7.3-58.1       grid_4.2.1          parallel_4.2.1     
