@@ -1,11 +1,27 @@
 Figure 4E: TETON Cells / GRP78
 ================
 Sandra Vidak
-November 4th 2022
+November 16th 2022
 
 ``` r
 library(ggplot2)
 library(ggthemes)
+library(curl)
+```
+
+    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare
+if they have not been already downloaded.
+
+``` r
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38158380"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
 ```
 
 ### Read Data for Fig 4E
@@ -151,7 +167,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] ggthemes_4.2.4 ggplot2_3.3.6 
+    ## [1] curl_4.3.3     ggthemes_4.2.4 ggplot2_3.3.6 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] highr_0.9        pillar_1.8.1     compiler_4.2.1   tools_4.2.1     

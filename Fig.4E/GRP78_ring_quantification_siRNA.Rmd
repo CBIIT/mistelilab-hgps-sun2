@@ -1,13 +1,14 @@
 ---
 title: "Figure 4E: TETON Cells / GRP78"
 author: "Sandra Vidak"
-date: "November 4th 2022"
+date: "November 16th 2022"
 output: github_document
 ---
 
 ```{r load-packages}
 library(ggplot2)
 library(ggthemes)
+library(curl)
 ```
 
 ```{r set-knitr-options, include=FALSE}
@@ -16,6 +17,18 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
   )
+```
+
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare if they have not been already downloaded.
+
+```{r download-data}
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38158380"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
 ```
 
 ### Read Data for Fig 4E
