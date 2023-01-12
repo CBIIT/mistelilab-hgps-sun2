@@ -1,7 +1,7 @@
 ---
 title: "Figure S1E and S1F: hTERT-Progeria / GRP94"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "October 28th 2022"
+date: "January 12th 2023"
 output: github_document
 ---
 
@@ -25,6 +25,7 @@ library(fs)
 library(Hmisc)
 library(ggthemes)
 library(DescTools) # for Dunnett's Test
+library(curl)
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
@@ -85,6 +86,18 @@ plot_plate(
   legend = "IF Antibody Layout",
   title = "Primary Ab"
 )
+```
+
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare if they have not been already downloaded.
+
+```{r download-data}
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38669189"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
 ```
 
 ### Read and Process Columbus data
