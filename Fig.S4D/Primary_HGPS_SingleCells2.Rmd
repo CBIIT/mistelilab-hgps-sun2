@@ -1,7 +1,7 @@
 ---
 title: "Figure S4B and S4C: Primary-HGPS Cells"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "October 31st 2022"
+date: "January 13th 2023"
 output: github_document
 ---
 
@@ -25,6 +25,7 @@ library(fs)
 library(Hmisc)
 library(ggthemes)
 library(DescTools) # for Dunnett's Test
+library(curl)
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
@@ -86,6 +87,18 @@ plot_plate(
   legend = "IF Antibody Layout",
   title = "Primary Ab"
 )
+```
+
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare if they have not been already downloaded.
+
+```{r download-data}
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38670119"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
 ```
 
 ### Read and Process Columbus data
