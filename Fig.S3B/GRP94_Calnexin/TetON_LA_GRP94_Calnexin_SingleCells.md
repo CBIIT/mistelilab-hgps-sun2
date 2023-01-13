@@ -1,7 +1,7 @@
-Figure S3B: TetON-Lamin A / GRP94 and Calnexin
+Single Cell Analysis for TetON-LA Cells
 ================
 Sandra Vidak/Gianluca Pegoraro
-October 28th 2022
+January 13th 2023
 
 ### Introduction
 
@@ -60,6 +60,18 @@ library(DescTools) # for Dunnett's Test
     ##     %nin%, Label, Mean, Quantile
 
 ``` r
+library(curl)
+```
+
+    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## 
+    ## Attaching package: 'curl'
+    ## 
+    ## The following object is masked from 'package:readr':
+    ## 
+    ##     parse_date
+
+``` r
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
@@ -82,10 +94,11 @@ plate_layouts <- read_tsv("metadata/plate_layout.txt") %>%
 glimpse(plate_layouts)
 ```
 
-    ## Rows: 24
-    ## Columns: 4
+    ## Rows: 36
+    ## Columns: 5
+    ## $ screen    <chr> "171006-TetON-LA-GRP94-Calnexin_20171006_171548", "171006-Te…
     ## $ row       <dbl> 2, 3, 4, 8, 9, 10, 2, 3, 4, 8, 9, 10, 2, 3, 4, 8, 9, 10, 2, …
-    ## $ column    <dbl> 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 13, 13, 13, 13, 13, 13, …
+    ## $ column    <dbl> 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 4, 4, …
     ## $ marker    <chr> "GRP94", "GRP94", "GRP94", "GRP94", "GRP94", "GRP94", "Calne…
     ## $ cell_line <fct> Uninduced, Uninduced, Uninduced, Induced, Induced, Induced, …
 
@@ -95,11 +108,22 @@ Plot plate layouts.
 
 ![](output/ab-layout-1.png)<!-- -->
 
+Download and unzip the Columbus results of the experiments from Figshare
+if they have not been already downloaded.
+
+``` r
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38669300"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
+```
+
 ### Read and Process Columbus data
 
-Recursively search the `input` directory and its subdirectories for
-files whose name includes the Glob patterns defined in the chunk above,
-and read the cell-level Columbus data from the results text files.
+Recursively search the `data` directory and its subdirectories for files
+whose name includes the Glob patterns defined in the chunk above, and
+read the cell-level Columbus data from the results text files.
 
 ``` r
 read_columbus_results <- function(path, glob) {
@@ -130,7 +154,7 @@ col_tbl <- read_columbus_results("input", glob_path)
 glimpse(col_tbl)
 ```
 
-    ## Rows: 114,034
+    ## Rows: 153,645
     ## Columns: 11
     ## $ screen           <chr> "171006-TetON-LA-GRP94-Calnexin_20171006_171548", "17…
     ## $ plate            <chr> "Plate1", "Plate1", "Plate1", "Plate1", "Plate1", "Pl…
@@ -150,7 +174,7 @@ Join Columbus data with the plate layout information.
 cell_tbl <- col_tbl %>%
   mutate(sum_marker_int = nuc_marker_int + cyto_marker_int) %>%
   inner_join(plate_layouts,
-             by = c("row", "column")) %>%
+             by = c("row", "column", "screen")) %>%
   select(screen,
          plate,
          well,
@@ -163,24 +187,26 @@ cell_tbl <- col_tbl %>%
 glimpse(cell_tbl)
 ```
 
-    ## Rows: 46,009
+    ## Rows: 31,239
     ## Columns: 14
     ## $ screen           <chr> "171006-TetON-LA-GRP94-Calnexin_20171006_171548", "17…
     ## $ plate            <chr> "Plate1", "Plate1", "Plate1", "Plate1", "Plate1", "Pl…
-    ## $ well             <chr> "B13", "B13", "B13", "B13", "B13", "B13", "B13", "B13…
+    ## $ well             <chr> "B2", "B2", "B2", "B2", "B2", "B2", "B2", "B2", "B2",…
     ## $ row              <dbl> 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
-    ## $ column           <dbl> 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 1…
+    ## $ column           <dbl> 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
     ## $ cell_line        <fct> Uninduced, Uninduced, Uninduced, Uninduced, Uninduced…
     ## $ marker           <chr> "GRP94", "GRP94", "GRP94", "GRP94", "GRP94", "GRP94",…
-    ## $ nuc_area         <dbl> 1686, 1641, 1755, 1689, 3086, 1549, 1787, 2638, 2054,…
-    ## $ cyto_area        <dbl> 1493, 6760, 5968, 3782, 7969, 11990, 3861, 8689, 1609…
-    ## $ cell_area        <dbl> 3179, 8401, 7723, 5471, 11055, 13539, 5648, 11327, 18…
-    ## $ nuc_marker_int   <dbl> 227.922, 338.604, 285.409, 304.580, 340.570, 262.719,…
-    ## $ cyto_marker_int  <dbl> 278.468, 324.927, 325.882, 375.914, 343.985, 266.381,…
-    ## $ ratio_marker_int <dbl> 0.818486, 1.042090, 0.875805, 0.810239, 0.990071, 0.9…
-    ## $ sum_marker_int   <dbl> 506.390, 663.531, 611.291, 680.494, 684.555, 529.100,…
+    ## $ nuc_area         <dbl> 1293, 1621, 1704, 1611, 1954, 1884, 1875, 1683, 1954,…
+    ## $ cyto_area        <dbl> 1744, 1846, 5496, 9889, 2665, 8378, 5833, 7026, 6036,…
+    ## $ cell_area        <dbl> 3037, 3467, 7200, 11500, 4619, 10262, 7708, 8709, 799…
+    ## $ nuc_marker_int   <dbl> 318.493, 301.035, 315.989, 321.253, 239.463, 281.372,…
+    ## $ cyto_marker_int  <dbl> 336.944, 353.451, 397.297, 383.383, 302.250, 338.292,…
+    ## $ ratio_marker_int <dbl> 0.945240, 0.851702, 0.795348, 0.837942, 0.792269, 0.8…
+    ## $ sum_marker_int   <dbl> 655.437, 654.486, 713.286, 704.636, 541.713, 619.664,…
 
-Calculate number of cells and mean per well for all properties.
+Calculate number of cells and mean per well for all properties. 4
+technical replicates for each of the 3 biological replicates -\> 12
+wells for marker/cell line combination.
 
 ``` r
 well_tbl <- cell_tbl %>%
@@ -197,23 +223,23 @@ well_tbl <- cell_tbl %>%
 glimpse(well_tbl)
 ```
 
-    ## Rows: 48
+    ## Rows: 36
     ## Columns: 14
-    ## Groups: screen, well, row, column, cell_line [48]
+    ## Groups: screen, well, row, column, cell_line [36]
     ## $ screen                <chr> "171006-TetON-LA-GRP94-Calnexin_20171006_171548"…
-    ## $ well                  <chr> "B13", "B15", "B2", "B4", "C13", "C15", "C2", "C…
-    ## $ row                   <dbl> 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 8, 8, 8, 8, …
-    ## $ column                <dbl> 13, 15, 2, 4, 13, 15, 2, 4, 13, 15, 2, 4, 13, 15…
+    ## $ well                  <chr> "B2", "B4", "C2", "C4", "D2", "D4", "H2", "H4", …
+    ## $ row                   <dbl> 2, 2, 3, 3, 4, 4, 8, 8, 9, 9, 10, 10, 2, 2, 3, 3…
+    ## $ column                <dbl> 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4, …
     ## $ cell_line             <fct> Uninduced, Uninduced, Uninduced, Uninduced, Unin…
     ## $ marker                <chr> "GRP94", "Calnexin", "GRP94", "Calnexin", "GRP94…
-    ## $ cell_n                <int> 944, 923, 1005, 1136, 896, 997, 1012, 953, 1012,…
-    ## $ nuc_area_mean         <dbl> 2017.387, 2016.228, 1968.333, 2026.074, 1997.770…
-    ## $ cyto_area_mean        <dbl> 6404.145, 6728.295, 6060.169, 5344.236, 6778.016…
-    ## $ cell_area_mean        <dbl> 8421.532, 8744.522, 8028.502, 7370.310, 8775.786…
-    ## $ nuc_marker_int_mean   <dbl> 279.4935, 257.4170, 284.8481, 264.8836, 274.3595…
-    ## $ cyto_marker_int_mean  <dbl> 301.3933, 227.6437, 308.2083, 248.4560, 298.1133…
-    ## $ ratio_marker_int_mean <dbl> 0.9328019, 1.1364656, 0.9280041, 1.0723685, 0.92…
-    ## $ sum_marker_int_mean   <dbl> 580.8867, 485.0607, 593.0564, 513.3395, 572.7729…
+    ## $ cell_n                <int> 1005, 1136, 1012, 953, 964, 1020, 1037, 1015, 94…
+    ## $ nuc_area_mean         <dbl> 1968.333, 2026.074, 1966.806, 1931.409, 1891.002…
+    ## $ cyto_area_mean        <dbl> 6060.169, 5344.236, 6216.121, 6517.486, 6416.634…
+    ## $ cell_area_mean        <dbl> 8028.502, 7370.310, 8182.927, 8448.895, 8307.636…
+    ## $ nuc_marker_int_mean   <dbl> 284.8481, 264.8836, 279.8431, 249.0214, 289.7483…
+    ## $ cyto_marker_int_mean  <dbl> 308.2083, 248.4560, 306.6213, 225.9160, 317.3632…
+    ## $ ratio_marker_int_mean <dbl> 0.9280041, 1.0723685, 0.9188292, 1.1077599, 0.91…
+    ## $ sum_marker_int_mean   <dbl> 593.0564, 513.3395, 586.4644, 474.9374, 607.1115…
 
 Calculate the mean of the technical replicates for each biological
 replicate. Now every marker/cell line combination has an n = 3
@@ -230,20 +256,20 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-    ## Rows: 8
+    ## Rows: 12
     ## Columns: 11
-    ## Groups: screen, cell_line [4]
+    ## Groups: screen, cell_line [8]
     ## $ screen                <chr> "171006-TetON-LA-GRP94-Calnexin_20171006_171548"…
     ## $ cell_line             <fct> Uninduced, Uninduced, Induced, Induced, Uninduce…
     ## $ marker                <chr> "Calnexin", "GRP94", "Calnexin", "GRP94", "Calne…
-    ## $ cell_n                <dbl> 1003.5000, 972.1667, 982.0000, 996.5000, 935.000…
-    ## $ nuc_area_mean         <dbl> 1972.492, 1983.632, 1703.603, 1693.685, 1927.536…
-    ## $ cyto_area_mean        <dbl> 6207.819, 6296.411, 6568.465, 6462.236, 6122.528…
-    ## $ cell_area_mean        <dbl> 8180.310, 8280.043, 8272.069, 8155.921, 8050.064…
-    ## $ nuc_marker_int_mean   <dbl> 255.0446, 284.0202, 267.6322, 275.5956, 233.3374…
-    ## $ cyto_marker_int_mean  <dbl> 234.4276, 308.3607, 243.4388, 313.1516, 184.6033…
-    ## $ ratio_marker_int_mean <dbl> 1.0940240, 0.9264153, 1.1071863, 0.8873453, 1.33…
-    ## $ sum_marker_int_mean   <dbl> 489.4723, 592.4309, 511.0710, 588.7472, 417.9045…
+    ## $ cell_n                <dbl> 1036.3333, 993.6667, 1002.3333, 1029.6667, 984.0…
+    ## $ nuc_area_mean         <dbl> 1959.848, 1942.047, 1681.717, 1675.370, 1899.869…
+    ## $ cyto_area_mean        <dbl> 5970.531, 6230.975, 6424.571, 6308.467, 5810.713…
+    ## $ cell_area_mean        <dbl> 7930.379, 8173.022, 8106.288, 7983.837, 7710.582…
+    ## $ nuc_marker_int_mean   <dbl> 253.5057, 284.8132, 260.3150, 278.1049, 234.4912…
+    ## $ cyto_marker_int_mean  <dbl> 235.0675, 310.7309, 244.8077, 320.3673, 192.3320…
+    ## $ ratio_marker_int_mean <dbl> 1.0848114, 0.9220026, 1.0728799, 0.8761103, 1.29…
+    ## $ sum_marker_int_mean   <dbl> 488.5733, 595.5441, 505.1227, 598.4721, 426.6857…
 
 ### Biological Replicates Level plot for Fig.S3B
 
@@ -282,8 +308,8 @@ knitr::kable(dunnett_test, digits = 3)
 
 | marker   | comparison        |   diff | lwr.ci | upr.ci |  pval |
 |:---------|:------------------|-------:|-------:|-------:|------:|
-| Calnexin | Induced-Uninduced |  0.012 | -0.714 |  0.738 | 0.951 |
-| GRP94    | Induced-Uninduced | -0.074 | -0.200 |  0.052 | 0.127 |
+| Calnexin | Induced-Uninduced | -0.053 | -0.879 |  0.772 | 0.866 |
+| GRP94    | Induced-Uninduced | -0.157 | -0.477 |  0.162 | 0.243 |
 
 Document the information about the analysis session
 
@@ -291,7 +317,7 @@ Document the information about the analysis session
 sessionInfo()
 ```
 
-    ## R version 4.2.1 (2022-06-23)
+    ## R version 4.2.2 (2022-10-31)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
     ## Running under: macOS Big Sur ... 10.16
     ## 
@@ -306,35 +332,36 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1       Formula_1.2-4    
-    ##  [5] survival_3.4-0    lattice_0.20-45   fs_1.5.2          forcats_0.5.2    
-    ##  [9] stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5       readr_2.1.3      
-    ## [13] tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6     tidyverse_1.3.2  
+    ##  [1] curl_4.3.3        DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1      
+    ##  [5] Formula_1.2-4     survival_3.4-0    lattice_0.20-45   fs_1.5.2         
+    ##  [9] forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5      
+    ## [13] readr_2.1.3       tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6    
+    ## [17] tidyverse_1.3.2  
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] bit64_4.0.5         lubridate_1.8.0     RColorBrewer_1.1-3 
-    ##  [4] httr_1.4.4          tools_4.2.1         backports_1.4.1    
+    ##  [4] httr_1.4.4          tools_4.2.2         backports_1.4.1    
     ##  [7] utf8_1.2.2          R6_2.5.1            rpart_4.1.19       
     ## [10] DBI_1.1.3           colorspace_2.0-3    nnet_7.3-18        
     ## [13] withr_2.5.0         Exact_3.2           tidyselect_1.2.0   
-    ## [16] gridExtra_2.3       bit_4.0.4           compiler_4.2.1     
+    ## [16] gridExtra_2.3       bit_4.0.4           compiler_4.2.2     
     ## [19] cli_3.4.1           rvest_1.0.3         htmlTable_2.4.1    
     ## [22] expm_0.999-6        xml2_1.3.3          labeling_0.4.2     
     ## [25] scales_1.2.1        checkmate_2.1.0     mvtnorm_1.1-3      
-    ## [28] proxy_0.4-27        digest_0.6.30       foreign_0.8-83     
+    ## [28] proxy_0.4-27        digest_0.6.30       foreign_0.8-84     
     ## [31] rmarkdown_2.17      base64enc_0.1-3     jpeg_0.1-9         
     ## [34] pkgconfig_2.0.3     htmltools_0.5.3     highr_0.9          
     ## [37] dbplyr_2.2.1        fastmap_1.1.0       htmlwidgets_1.5.4  
     ## [40] rlang_1.0.6         readxl_1.4.1        rstudioapi_0.14    
     ## [43] farver_2.1.1        generics_0.1.3      jsonlite_1.8.3     
     ## [46] vroom_1.6.0         googlesheets4_1.0.1 magrittr_2.0.3     
-    ## [49] interp_1.1-3        Matrix_1.5-1        Rcpp_1.0.9         
+    ## [49] interp_1.1-3        Matrix_1.5-3        Rcpp_1.0.9         
     ## [52] munsell_0.5.0       fansi_1.0.3         lifecycle_1.0.3    
     ## [55] stringi_1.7.8       yaml_2.3.6          rootSolve_1.8.2.3  
-    ## [58] MASS_7.3-58.1       grid_4.2.1          parallel_4.2.1     
+    ## [58] MASS_7.3-58.1       grid_4.2.2          parallel_4.2.2     
     ## [61] crayon_1.5.2        lmom_2.9            deldir_1.0-6       
-    ## [64] haven_2.5.1         splines_4.2.1       hms_1.1.2          
-    ## [67] knitr_1.40          pillar_1.8.1        boot_1.3-28        
+    ## [64] haven_2.5.1         splines_4.2.2       hms_1.1.2          
+    ## [67] knitr_1.40          pillar_1.8.1        boot_1.3-28.1      
     ## [70] gld_2.6.6           reprex_2.0.2        glue_1.6.2         
     ## [73] evaluate_0.17       latticeExtra_0.6-30 data.table_1.14.4  
     ## [76] modelr_0.1.9        png_0.1-7           vctrs_0.5.0        

@@ -1,7 +1,7 @@
 ---
-title: "Figure S1E and S1F: TetON-Lamin A / GRP78 and PDI"
+title: "Figure S3B: TetON-Lamin A / GRP78 and PDI"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "October 28th 2022"
+date: "January 13th 2023"
 output: github_document
 ---
 
@@ -23,12 +23,14 @@ library(fs)
 library(Hmisc)
 library(ggthemes)
 library(DescTools) # for Dunnett's Test
+library(curl)
 source("R/Plotters.R") #Functions needed for plotting
 ```
 
 ```{r set-knitr-options, include=FALSE}
 knitr::opts_chunk$set(
   fig.path = 'output/',
+  dev = c("png"),
   message = FALSE,
   warning = FALSE
   )
@@ -84,9 +86,21 @@ plot_plate(
 )
 ```
 
+### Download the data if needed
+
+Download and unzip the Columbus results of the experiments from Figshare if they have not been already downloaded.
+
+```{r download-data}
+if(!dir.exists("input")) {
+  URL <- "https://figshare.com/ndownloader/files/38669273"
+  curl_download(URL, "input.zip")
+  unzip("input.zip")
+}
+```
+
 ### Read and Process Columbus data
 
-Recursively search the `input` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
+Recursively search the `data` directory and its subdirectories for files whose name includes the Glob patterns defined in the chunk above, and read the cell-level Columbus data from the results text files.
 
 ```{r read-columbus-data, message=FALSE}
 read_columbus_results <- function(path, glob) {
@@ -123,7 +137,7 @@ Join Columbus data with the plate layout information.
 cell_tbl <- col_tbl %>%
   mutate(sum_marker_int = nuc_marker_int + cyto_marker_int) %>%
   inner_join(plate_layouts,
-             by = c("row", "column")) %>%
+             by = c("row", "column", "screen")) %>%
   select(screen,
          plate,
          well,
@@ -136,7 +150,7 @@ cell_tbl <- col_tbl %>%
 glimpse(cell_tbl)
 ```
 
-Calculate number of cells and mean per well for all properties.
+Calculate number of cells and mean per well for all properties. 4 technical replicates for each of the 3 biological replicates -> 12 wells for marker/cell line combination.
 
 ```{r well-summarise}
 well_tbl <- cell_tbl %>%
@@ -166,7 +180,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
+
 ### Biological Replicates Level plot for Fig.S3B
+
 
 ```{r FigS3_B, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
@@ -175,9 +191,11 @@ bioreps_tbl %>%
                  title = "Per Well Total Intensity")
 ```
 
+
 ### Calculate Dunnett's test for the continuous variables.
 
-Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`.
+Define a custom function to run a Dunnett post-hoc test only on the Mean marker intensity sum (Cyto + Nucleus), using the cell line as the predictor variable, and fixing WT1 as the negative control. The output of the Dunnett's test is then rearranged to a tidy table to make it work with `dplyr`. 
+
 
 ```{r}
 calc_dunnett <- function(df){
@@ -189,7 +207,7 @@ calc_dunnett <- function(df){
 }
 ```
 
-Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file.
+Run the custom function on all the data grouped based on the IF marker and save the data to a .csv file. 
 
 ```{r results='asis'}
 dunnett_test <- bioreps_tbl %>%
@@ -200,6 +218,7 @@ write_csv(dunnett_test, "output/dunnett_results.csv")
 
 knitr::kable(dunnett_test, digits = 3)
 ```
+
 
 Document the information about the analysis session
 
