@@ -12,7 +12,7 @@ Once the repo is cloned, and to recreate locally the `renv` library used in the 
 
 The analysis for each figure panel in the manuscript is organized as a self-contained directory that contains:
 
--   An `input` folder containing the well and single cell results of the image analysis run in Columbus. In folders for Fig. 3I, 4E, S3C, and S5D the input folder contains only well level data. The input folder contains a lot of data and is not under version control in Github. ~~If the `input` folder is not present, the first time .Rmd analysis script is run the folder will be automatically downloaded from the [corresponding Figshare data repository for this project (TBD)](TBD) and unzipped in the appropriate location.~~
+-   An `input` folder containing the well and single cell results of the image analysis run in Columbus. In folders for Fig. 3I, 4E, S3C, and S5D the input folder contains only well level data. The input folder contains a lot of data and is not under version control in Github. If the `input` folder is not present, the first time .Rmd analysis script is run the folder will be automatically downloaded from the [corresponding Figshare data repository for this project](https://figshare.com/account/home#/projects/152745) and unzipped in the appropriate location.
 
 -   An `.Rmd` script that contains the R code to run the analysis. The script can be "knitted" in RStudio to reproduce the output.
 
