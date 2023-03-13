@@ -1,7 +1,7 @@
 ---
-title: "Figure 1C: TetON Cells / Hsp110 and SUN1"
+title: "Figure 1C and S3A: TetON Cells / Hsp110 and SUN1"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "November 16th 2022"
+date: "March 13th 2022"
 output: github_document
 ---
 
@@ -181,9 +181,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-### Biological Replicates Level plots for Fig.1C and S4A
+### Biological Replicates Level plots for Fig.1C and S3A
 
-```{r Fig1_C_S4A, fig.width=5,fig.height=4.5, echo=FALSE}
+```{r Fig1_C_S3A, fig.width=5,fig.height=4.5, echo=FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity (A.U), +/- SD",

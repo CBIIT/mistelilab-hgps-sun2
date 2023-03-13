@@ -1,7 +1,7 @@
-Figure 1C: TetON Cells / Hsp110 and SUN1
+Figure 1C and S3A: TetON Cells / Hsp110 and SUN1
 ================
 Sandra Vidak/Gianluca Pegoraro
-November 16th 2022
+March 13th 2022
 
 ### Introduction
 
@@ -65,7 +65,7 @@ library(DescTools) # for Dunnett's Test
 library(curl)
 ```
 
-    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## Using libcurl 7.86.0 with LibreSSL/3.3.6
     ## 
     ## Attaching package: 'curl'
     ## 
@@ -272,9 +272,9 @@ glimpse(bioreps_tbl)
     ## $ ratio_marker_int_mean <dbl> 0.8182083, 3.1851500, 0.9839436, 4.0455666, 0.80…
     ## $ sum_marker_int_mean   <dbl> 1886.4922, 1485.3912, 1673.4021, 2486.8598, 1514…
 
-### Biological Replicates Level plots for Fig.1C and S4A
+### Biological Replicates Level plots for Fig.1C and S3A
 
-![](output/Fig1_C_S4A-1.png)<!-- -->
+![](output/Fig1_C_S3A-1.png)<!-- -->
 
 ### Calculate Dunnett’s test for the continuous variables.
 
@@ -318,7 +318,7 @@ Document the information about the analysis session
 sessionInfo()
 ```
 
-    ## R version 4.2.1 (2022-06-23)
+    ## R version 4.2.2 (2022-10-31)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
     ## Running under: macOS Big Sur ... 10.16
     ## 
@@ -334,39 +334,39 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] curl_4.3.3        DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1      
-    ##  [5] Formula_1.2-4     survival_3.4-0    lattice_0.20-45   fs_1.5.2         
+    ##  [5] Formula_1.2-4     survival_3.5-3    lattice_0.20-45   fs_1.5.2         
     ##  [9] forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5      
     ## [13] readr_2.1.3       tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6    
     ## [17] tidyverse_1.3.2  
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] bit64_4.0.5         lubridate_1.8.0     RColorBrewer_1.1-3 
-    ##  [4] httr_1.4.4          tools_4.2.1         backports_1.4.1    
+    ##  [4] httr_1.4.4          tools_4.2.2         backports_1.4.1    
     ##  [7] utf8_1.2.2          R6_2.5.1            rpart_4.1.19       
     ## [10] DBI_1.1.3           colorspace_2.0-3    nnet_7.3-18        
     ## [13] withr_2.5.0         Exact_3.2           tidyselect_1.2.0   
-    ## [16] gridExtra_2.3       bit_4.0.4           compiler_4.2.1     
+    ## [16] gridExtra_2.3       bit_4.0.4           compiler_4.2.2     
     ## [19] cli_3.4.1           rvest_1.0.3         htmlTable_2.4.1    
     ## [22] expm_0.999-6        xml2_1.3.3          labeling_0.4.2     
     ## [25] scales_1.2.1        checkmate_2.1.0     mvtnorm_1.1-3      
-    ## [28] proxy_0.4-27        digest_0.6.30       foreign_0.8-83     
+    ## [28] proxy_0.4-27        digest_0.6.30       foreign_0.8-84     
     ## [31] rmarkdown_2.17      base64enc_0.1-3     jpeg_0.1-9         
     ## [34] pkgconfig_2.0.3     htmltools_0.5.3     highr_0.9          
     ## [37] dbplyr_2.2.1        fastmap_1.1.0       htmlwidgets_1.5.4  
     ## [40] rlang_1.0.6         readxl_1.4.1        rstudioapi_0.14    
     ## [43] farver_2.1.1        generics_0.1.3      jsonlite_1.8.3     
     ## [46] vroom_1.6.0         googlesheets4_1.0.1 magrittr_2.0.3     
-    ## [49] interp_1.1-3        Matrix_1.5-1        Rcpp_1.0.9         
+    ## [49] interp_1.1-3        Matrix_1.5-3        Rcpp_1.0.9         
     ## [52] munsell_0.5.0       fansi_1.0.3         lifecycle_1.0.3    
     ## [55] stringi_1.7.8       yaml_2.3.6          rootSolve_1.8.2.3  
-    ## [58] MASS_7.3-58.1       grid_4.2.1          parallel_4.2.1     
+    ## [58] MASS_7.3-58.3       grid_4.2.2          parallel_4.2.2     
     ## [61] crayon_1.5.2        lmom_2.9            deldir_1.0-6       
-    ## [64] haven_2.5.1         splines_4.2.1       hms_1.1.2          
-    ## [67] knitr_1.40          pillar_1.8.1        boot_1.3-28        
+    ## [64] haven_2.5.1         splines_4.2.2       hms_1.1.2          
+    ## [67] knitr_1.40          pillar_1.8.1        boot_1.3-28.1      
     ## [70] gld_2.6.6           reprex_2.0.2        glue_1.6.2         
     ## [73] evaluate_0.17       latticeExtra_0.6-30 data.table_1.14.4  
     ## [76] modelr_0.1.9        png_0.1-7           vctrs_0.5.0        
     ## [79] tzdb_0.3.0          cellranger_1.1.0    gtable_0.3.1       
     ## [82] assertthat_0.2.1    xfun_0.34           broom_1.0.1        
-    ## [85] e1071_1.7-12        class_7.3-20        googledrive_2.0.0  
+    ## [85] e1071_1.7-12        class_7.3-21        googledrive_2.0.0  
     ## [88] gargle_1.2.1        cluster_2.1.4       ellipsis_0.3.2
