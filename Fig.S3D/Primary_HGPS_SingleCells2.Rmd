@@ -1,7 +1,7 @@
 ---
-title: "Figure S4B and S4C: Primary-HGPS Cells"
+title: "Figure S3D: Primary-HGPS Cells"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "January 13th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -229,9 +229,9 @@ bioreps_defects_tbl <- defects_tbl %>%
 glimpse(bioreps_defects_tbl)
 ```
 
-### Biological Replicates Level plots for Figure S4D
+### Biological Replicates Level plots for Figure S3D
 
-```{r Fig.S4_D, fig.width=8,fig.height=4.5, echo = FALSE}
+```{r Fig.S3_D, fig.width=8,fig.height=4.5, echo = FALSE}
 bioreps_defects_tbl %>%
 plot_crossbars(property = prop_defects_sum_plus_mean,
                property_legend = "% of Cells with Plus\nHGPS Total Alterations",
