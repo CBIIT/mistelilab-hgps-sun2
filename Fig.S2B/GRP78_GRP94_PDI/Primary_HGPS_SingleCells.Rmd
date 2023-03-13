@@ -1,7 +1,7 @@
 ---
-title: "Figure S2A: Primary HGPS Fibroblasts / Calnexin"
+title: "Figure S2B: Primary HGPS Fibroblasts / GRP78, GRP94 and PDI"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "January 12th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -9,11 +9,11 @@ output: github_document
 
 Columbus screen names:
 
-`220303-40x-hFibro-GRP94-GRP78-PDI_20220303_124042[8143]`
+`220303-40x-hFibro-GRP94-GRP78-PDI_20220303_124042`
 
-`220309-40x-hFibro-GRP94-GRP78-PDI_20220309_105421[8164]`
+`220309-40x-hFibro-GRP94-GRP78-PDI_20220309_105421`
 
-`220310-40x-hFibro-GRP94-GRP78-PDI_20220310_111540[8171]`
+`220310-40x-hFibro-GRP94-GRP78-PDI_20220310_111540`
 
 ### Analysis Setup
 
@@ -53,7 +53,7 @@ vjust = 0.5
 Read plate layouts.
 
 ```{r read-metadata}
-cell_levs <- c("WT1", "WT2", "WT3","WT4", 
+cell_levs <- c("WT1", "WT2", "WT3", "WT4", 
                "HGPS1","HGPS2",
                "HGPS3", "HGPS4", "HGPS5")
 
@@ -95,7 +95,7 @@ Download and unzip the Columbus results of the experiments from Figshare if they
 
 ```{r download-data}
 if(!dir.exists("input")) {
-  URL <- "https://figshare.com/ndownloader/files/38669243"
+  URL <- "https://figshare.com/ndownloader/files/38669231"
   curl_download(URL, "input.zip")
   unzip("input.zip")
 }
@@ -229,9 +229,9 @@ bioreps_defects_tbl <- defects_tbl %>%
 glimpse(bioreps_defects_tbl)
 ```
 
-### Biological Replicates Level plots for Figure S2A
+### Biological Replicates Level plots for Figure S2B
 
-```{r Fig.S2_A, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r Fig.S2_B, fig.width=8,fig.height=4.5, echo = FALSE}
 bioreps_defects_tbl %>%
 plot_crossbars(property = prop_defects_sum_plus_mean,
                property_legend = "% of Cells with Plus\nHGPS Total Alterations",
