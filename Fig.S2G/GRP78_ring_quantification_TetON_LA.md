@@ -1,7 +1,7 @@
-Figure S3C: TETON Cells / GRP78
+Figure S2G: TETON Cells / GRP78
 ================
 Sandra Vidak
-January 13th 2023
+March 13th 2023
 
 ``` r
 library(ggplot2)
@@ -9,7 +9,7 @@ library(ggthemes)
 library(curl)
 ```
 
-    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## Using libcurl 7.86.0 with LibreSSL/3.3.6
 
 Download and unzip the Columbus results of the experiments from Figshare
 if they have not been already downloaded.
@@ -22,7 +22,7 @@ if(!dir.exists("input")) {
 }
 ```
 
-### Read Data for Fig S3C
+### Read Data for Fig S2G
 
 Import and filter data and calculate sum and mean of the GRP78
 peripheral recruitment for each biological replicate in TetON
@@ -95,9 +95,9 @@ Condition <- rep(c("GFP-LA OFF","GFP-LA ON"), each=1)
 GRP78_plot <- data.frame(Mean_GRP78_levels2,SD_GRP78_levels2, Condition )
 ```
 
-### Biological Replicates Level plot for Fig.S3C
+### Biological Replicates Level plot for Fig.S2G
 
-![](output/Fig_S3C-1.png)<!-- -->
+![](output/Fig_S2G-1.png)<!-- -->
 
 Document the information about the analysis session
 

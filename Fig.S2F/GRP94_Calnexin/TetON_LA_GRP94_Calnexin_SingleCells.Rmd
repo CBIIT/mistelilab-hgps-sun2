@@ -1,7 +1,7 @@
 ---
-title: "Figure S3B: TetON-Lamin A / GRP78 and PDI"
+title: "Figure S2F: TetON-Lamin A / GRP94 and Calnexin"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "January 13th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -9,9 +9,9 @@ output: github_document
 
 Columbus screen names:
 
-`171006-TetON-LA-GRP78-PDI_20171006_164850`
+`171006-TetON-LA-GRP94-Calnexin_20171006_171548 `
 
-`180130-40x-TetON-LA-GRP78-PDI_20180130_123005`
+`180130-40x-TetON-LA-GRP94,Calnexin-SUN1_20180130_114147`
 
 ### Analysis Setup
 
@@ -86,13 +86,11 @@ plot_plate(
 )
 ```
 
-### Download the data if needed
-
 Download and unzip the Columbus results of the experiments from Figshare if they have not been already downloaded.
 
 ```{r download-data}
 if(!dir.exists("input")) {
-  URL <- "https://figshare.com/ndownloader/files/38669273"
+  URL <- "https://figshare.com/ndownloader/files/38669300"
   curl_download(URL, "input.zip")
   unzip("input.zip")
 }
@@ -184,7 +182,7 @@ glimpse(bioreps_tbl)
 ### Biological Replicates Level plot for Fig.S3B
 
 
-```{r FigS3_B, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r FigS2_F, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity (A.U), +/- SD",
@@ -218,7 +216,6 @@ write_csv(dunnett_test, "output/dunnett_results.csv")
 
 knitr::kable(dunnett_test, digits = 3)
 ```
-
 
 Document the information about the analysis session
 
