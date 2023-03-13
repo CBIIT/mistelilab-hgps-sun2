@@ -1,7 +1,7 @@
 ---
-title: "Figure S1E and S1F: hTERT-Progeria / GRP94"
+title: "Figure S1H and S2A: hTERT-Progeria / Calnexin"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "January 12th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -9,11 +9,11 @@ output: github_document
 
 Columbus screen names:
 
-`180124-40x-hFibro-GRP78-Hsp70-VCP-LB1_20180124_103723`
+`180124-40x-hFibro-Calnexin-Hsp40_20180124_111314`
 
-`180129-40x-hFibro-GRP78-PDI-Hsp70-VCP-SUN2-LB1_20180129_123247`
+`180129-40x-hFibro-Calnexin-HSF1_20180129_130358`
 
-`180322-40X-hFibro-NewSigmaFBS-GRP78-PDI-Hsc70_20180322_162251`
+`180205-40x-hFibro-Calnexin-Hsp70-Hsp90-SUN1_20180205_112614`
 
 ### Analysis Setup
 
@@ -94,7 +94,7 @@ Download and unzip the Columbus results of the experiments from Figshare if they
 
 ```{r download-data}
 if(!dir.exists("input")) {
-  URL <- "https://figshare.com/ndownloader/files/38669189"
+  URL <- "https://figshare.com/ndownloader/files/38669186"
   curl_download(URL, "input.zip")
   unzip("input.zip")
 }
@@ -182,9 +182,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-### Biological Replicates Level plots for Figure S1E
+### Biological Replicates Level plots for Figure S1H
 
-```{r Fig.S1_E, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r Fig.S1_H, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity +/- SD",
@@ -237,9 +237,9 @@ bioreps_defects_tbl <- defects_tbl %>%
 glimpse(bioreps_defects_tbl)
 ```
 
-### Biological Replicates Level plots for Figure S1F
+### Biological Replicates Level plots for Figure S2A
 
-```{r Fig.S1_F, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r Fig.S2_A, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_defects_tbl %>%
 plot_crossbars(property = prop_defects_sum_plus_mean,
                property_legend = "% of Cells with Plus\nHGPS Total Alterations",
@@ -274,7 +274,7 @@ knitr::kable(dunnett_test, digits = 3)
 
 ### Chi-square test for counts/proportion of Cells with defects
 
-Calculate the number of cells with defects and normal on a per well basis. Each treatment has 12 wells (4 technical replicates X 3 biological replicates)
+Calculate the number of cells with defects and normal on a per well basis. Each treatment has 12 wells (4 technical replicates X 3 biological replicates).
 
 ```{r}
 defects_counts <- cell_tbl %>%
