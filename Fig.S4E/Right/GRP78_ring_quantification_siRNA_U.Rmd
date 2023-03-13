@@ -1,7 +1,7 @@
 ---
-title: "Figure S5D: TETON Cells / GRP78"
+title: "Figure S4E Right: TETON Cells / GRP78"
 author: "Sandra Vidak"
-date: "January 13th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -31,7 +31,7 @@ if(!dir.exists("input")) {
 }
 ```
 
-### Read Data for Fig S5D
+### Read Data for Fig S4E Right
 
 Import and filter data and calculate sum and mean of the GRP78 peripheral recruitment for each biological replicate in TetON fibroblasts.
 
@@ -130,9 +130,9 @@ Condition <- rep(c("GFP-progerin OFF", "siSUN1", "siSUN2"), each=1)
 GRP78_plot <- data.frame(Mean_GRP78_levels2,SD_GRP78_levels2, Condition )
 ```
 
-### Biological Replicates Level plot for Fig.S5D
+### Biological Replicates Level plot for Fig.S4E right
 
-```{r Fig_S5D, echo=FALSE}
+```{r Fig_S4E_Right, echo=FALSE}
 ggplot(GRP78_plot, aes(x = Condition, 
                        y = Mean_GRP78_levels, 
                        ymin = Mean_GRP78_levels-SD_GRP78_levels, 

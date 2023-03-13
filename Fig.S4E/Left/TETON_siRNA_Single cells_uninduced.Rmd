@@ -1,7 +1,7 @@
 ---
-title: "Figure S5C: TETON-Progerin Cells"
+title: "Figure S4E Left: TETON-Progerin Cells"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "January 13th 2023"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -179,9 +179,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-### Biological Replicates Level plot for Fig.S5C
+### Biological Replicates Level plot for the left plot in Fig.S4E
 
-```{r FigS5_C, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r FigS4_E_left, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity (A.U), +/- SD",

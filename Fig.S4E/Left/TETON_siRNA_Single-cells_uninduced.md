@@ -1,7 +1,7 @@
-Figure S5C: TETON-Progerin Cells
+Figure S4E Left: TETON-Progerin Cells
 ================
 Sandra Vidak/Gianluca Pegoraro
-January 13th 2023
+March 13th 2023
 
 ### Introduction
 
@@ -65,7 +65,7 @@ library(DescTools) # for Dunnett's Test
 library(curl)
 ```
 
-    ## Using libcurl 7.79.1 with LibreSSL/3.3.6
+    ## Using libcurl 7.86.0 with LibreSSL/3.3.6
     ## 
     ## Attaching package: 'curl'
     ## 
@@ -271,9 +271,9 @@ glimpse(bioreps_tbl)
     ## $ ratio_marker_int_mean <dbl> 0.7014815, 0.7299689, 0.7457416, 0.7595083, 0.86…
     ## $ sum_marker_int_mean   <dbl> 8606.332, 8747.527, 8283.456, 6929.136, 7948.312…
 
-### Biological Replicates Level plot for Fig.S5C
+### Biological Replicates Level plot for the left plot in Fig.S4E
 
-![](output/FigS5_C-1.png)<!-- -->
+![](output/FigS4_E_left-1.png)<!-- -->
 
 ### Calculate Dunnett’s test for the continuous variables.
 
@@ -333,7 +333,7 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] curl_4.3.3        DescTools_0.99.47 ggthemes_4.2.4    Hmisc_4.7-1      
-    ##  [5] Formula_1.2-4     survival_3.4-0    lattice_0.20-45   fs_1.5.2         
+    ##  [5] Formula_1.2-4     survival_3.5-3    lattice_0.20-45   fs_1.5.2         
     ##  [9] forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10      purrr_0.3.5      
     ## [13] readr_2.1.3       tidyr_1.2.1       tibble_3.1.8      ggplot2_3.3.6    
     ## [17] tidyverse_1.3.2  
@@ -358,7 +358,7 @@ sessionInfo()
     ## [49] interp_1.1-3        Matrix_1.5-3        Rcpp_1.0.9         
     ## [52] munsell_0.5.0       fansi_1.0.3         lifecycle_1.0.3    
     ## [55] stringi_1.7.8       yaml_2.3.6          rootSolve_1.8.2.3  
-    ## [58] MASS_7.3-58.1       grid_4.2.2          parallel_4.2.2     
+    ## [58] MASS_7.3-58.3       grid_4.2.2          parallel_4.2.2     
     ## [61] crayon_1.5.2        lmom_2.9            deldir_1.0-6       
     ## [64] haven_2.5.1         splines_4.2.2       hms_1.1.2          
     ## [67] knitr_1.40          pillar_1.8.1        boot_1.3-28.1      
@@ -367,5 +367,5 @@ sessionInfo()
     ## [76] modelr_0.1.9        png_0.1-7           vctrs_0.5.0        
     ## [79] tzdb_0.3.0          cellranger_1.1.0    gtable_0.3.1       
     ## [82] assertthat_0.2.1    xfun_0.34           broom_1.0.1        
-    ## [85] e1071_1.7-12        class_7.3-20        googledrive_2.0.0  
+    ## [85] e1071_1.7-12        class_7.3-21        googledrive_2.0.0  
     ## [88] gargle_1.2.1        cluster_2.1.4       ellipsis_0.3.2
