@@ -126,9 +126,9 @@ if(!dir.exists("input")) {
 
 ### Read and Process Columbus data
 
-Recursively search the `data` directory and its subdirectories for files
-whose name includes the Glob patterns defined in the chunk above, and
-read the cell-level Columbus data from the results text files.
+Recursively search the `input` directory and its subdirectories for
+files whose name includes the Glob patterns defined in the chunk above,
+and read the cell-level Columbus data from the results text files.
 
 ``` r
 read_columbus_results <- function(path, glob) {
