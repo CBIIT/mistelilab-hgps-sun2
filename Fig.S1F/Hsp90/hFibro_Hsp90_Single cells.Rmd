@@ -1,7 +1,7 @@
 ---
-title: "Figure S1D: TetON Cells / Hsc70"
+title: "Figure S1F: TetON Cells / Hsp90"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "November 16th 2022"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -9,11 +9,11 @@ output: github_document
 
 Columbus screen names:
 
-`180129-40x-hFibro-GRP94-Hsc70-SUN1-LAP2_20180129_121044`
+`180129-40x-hFibro-Hsp40-Hsp90_20180129_131533`
 
-`180322-40X-hFibro-NewSigmaFBS-GRP78-PDI-Hsc70_20180322_162251`
+`180322-40X-hFibro-AtlantaFBS-GRP94-Calnexin-Hsp40-Hsp90-SUN1-LAP2_20180322_152441`
 
-`180424-hFibro-PDI-Hsc70-VCP_20180424_115904`
+`180322-40X-hFibro-NewSigmaFBS-GRP94-Calnexin-Hsp40-Hsp90-SUN1-LAP2_20180322_163721`
 
 ### Analysis Setup
 
@@ -93,7 +93,7 @@ Download and unzip the Columbus results of the experiments from Figshare if they
 
 ```{r download-data}
 if(!dir.exists("input")) {
-  URL <- "https://figshare.com/ndownloader/files/38158791"
+  URL <- "https://figshare.com/ndownloader/files/38159769"
   curl_download(URL, "input.zip")
   unzip("input.zip")
 }
@@ -181,9 +181,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-### Biological Replicates Level plots For Figure S1D
+### Biological Replicates Level plots For Figure S1F
 
-```{r Fig.S1_D, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r Fig.S1_F, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity (A.U), +/- SD",

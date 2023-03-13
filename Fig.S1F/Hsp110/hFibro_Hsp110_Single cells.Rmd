@@ -1,7 +1,7 @@
 ---
-title: "Figure S1D: TetON Cells / Hsp90"
+title: "Figure S1F: TetON Cells / Hsp110"
 author: "Sandra Vidak/Gianluca Pegoraro"
-date: "November 16th 2022"
+date: "March 13th 2023"
 output: github_document
 ---
 
@@ -9,11 +9,11 @@ output: github_document
 
 Columbus screen names:
 
-`180129-40x-hFibro-Hsp40-Hsp90_20180129_131533`
+`200707-40x-hTERTfibro-Hsp90-Hsp110-SUN1_20200707_115858`
 
-`180322-40X-hFibro-AtlantaFBS-GRP94-Calnexin-Hsp40-Hsp90-SUN1-LAP2_20180322_152441`
+`200712-40x-hTERTfibro-Hsp110_20200714_115633`
 
-`180322-40X-hFibro-NewSigmaFBS-GRP94-Calnexin-Hsp40-Hsp90-SUN1-LAP2_20180322_163721`
+`200724-40x-hTERTfibro-Calnexin-Hsp90-Hsp110-SUN`\_20200724_122959\`
 
 ### Analysis Setup
 
@@ -93,7 +93,7 @@ Download and unzip the Columbus results of the experiments from Figshare if they
 
 ```{r download-data}
 if(!dir.exists("input")) {
-  URL <- "https://figshare.com/ndownloader/files/38159769"
+  URL <- "https://figshare.com/ndownloader/files/38160372"
   curl_download(URL, "input.zip")
   unzip("input.zip")
 }
@@ -138,7 +138,7 @@ Join Columbus data with the plate layout information.
 cell_tbl <- col_tbl %>%
   mutate(sum_marker_int = nuc_marker_int + cyto_marker_int) %>%
   inner_join(plate_layouts,
-             by = c("row", "column")) %>%
+             by = c("row", "column", "screen")) %>%
   select(screen,
          plate,
          well,
@@ -181,9 +181,9 @@ bioreps_tbl <- well_tbl %>%
 glimpse(bioreps_tbl)
 ```
 
-### Biological Replicates Level plots For Figure S1D
+### Biological Replicates Level plots For Figure S1F
 
-```{r Fig.S1_D, fig.width=4,fig.height=4.5, echo = FALSE}
+```{r Fig.S1_F, fig.width=4,fig.height=4.5, echo = FALSE}
 bioreps_tbl %>%
   plot_crossbars(property = sum_marker_int_mean,
                  property_legend = "Total Mean Intensity (A.U), +/- SD",
