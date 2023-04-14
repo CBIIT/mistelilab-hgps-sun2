@@ -1,5 +1,7 @@
 # mistelilab-hgps-sun2
 
+[![DOI](https://zenodo.org/badge/492982501.svg)](https://zenodo.org/badge/latestdoi/492982501)
+
 This is a repo containing the R code used to generate some of the figures for a pre-print manuscript from the Misteli Lab at the National Cancer Institute/NIH.
 
 ### Activation of endoplasmic reticulum stress via clustering of the inner nuclear membrane protein SUN2
